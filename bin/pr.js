@@ -62,8 +62,19 @@ const generateFileReport = async (files, historyCount = 3) => {
   const commits = (await getBlobHistory('package.json', historyCount)).filter(({ tag }) => {
     return MAJOR_NUMBER === parseVersion(tag)[0];
   });
-  const warns = [];
 
+  const npmHistory = await loadNPMHistory(commits);
+  await processFiles(files, allFilesStat, commits, npmHistory);
+  const warnings = checkFileSizeDiffs(allFilesStat);
+
+  return {
+    version,
+    files: allFilesStat,
+    warns: warnings
+  };
+};
+
+const loadNPMHistory = async (commits) => {
   const npmHistory = {};
 
   await Promise.all(
@@ -72,11 +83,15 @@ const generateFileReport = async (files, historyCount = 3) => {
     })
   );
 
+  return npmHistory;
+};
+
+const processFiles = async (files, allFilesStat, commits, npmHistory) => {
   for (const [name, filename] of Object.entries(files)) {
     const file = await fs.stat(filename).catch(console.warn);
     const gzip = file ? zlib.gzipSync(await fs.readFile(filename)).length : 0;
 
-    const stat = (allFilesStat[filename] = file
+    allFilesStat[filename] = file
       ? {
           name,
           size: file.size,
@@ -93,11 +108,15 @@ const generateFileReport = async (files, historyCount = 3) => {
             };
           }),
         }
-      : null);
+      : null;
+  }
+};
 
+const checkFileSizeDiffs = (allFilesStat) => {
+  const warns = [];
+  for (const [filename, stat] of Object.entries(allFilesStat)) {
     if (stat.history[0]) {
       const diff = stat.gzip - stat.history[0].gzip;
-
       if (diff > FILE_SIZE_DIFF_THRESHOLD) {
         warns.push({
           filename,
@@ -108,12 +127,7 @@ const generateFileReport = async (files, historyCount = 3) => {
       }
     }
   }
-
-  return {
-    version,
-    files: allFilesStat,
-    warns,
-  };
+  return warns;
 };
 
 const generateBody = async ({ files, template = './templates/pr.hbs' } = {}) => {
