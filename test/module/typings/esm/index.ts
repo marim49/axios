@@ -41,8 +41,8 @@ const config: AxiosRequestConfig = {
   timeout: 10000,
   withCredentials: true,
   auth: {
-    username: 'janedoe',
-    password: 's00pers3cret',
+    username: process.env.AUTH_USERNAME,
+    password: process.env.AUTH_PASSWORD,
   },
   responseType: 'json',
   xsrfCookieName: 'XSRF-TOKEN',
