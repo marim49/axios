@@ -59,52 +59,27 @@ async function getFilesFromNPM(pkg) {
 
 const generateFileReport = async (files, historyCount = 3) => {
   const allFilesStat = {};
-  const commits = (await getBlobHistory('package.json', historyCount)).filter(({ tag }) => {
-    return MAJOR_NUMBER === parseVersion(tag)[0];
-  });
+  const filteredCommits = filterCommitsByVersion(await getBlobHistory('package.json', historyCount));
+  const npmHistory = await getNpmHistory(filteredCommits);
   const warns = [];
 
-  const npmHistory = {};
-
-  await Promise.all(
-    commits.map(async ({ tag }) => {
-      npmHistory[tag] = await getFilesFromNPM(`axios@${tag.replace(/^v/, '')}`);
-    })
-  );
-
   for (const [name, filename] of Object.entries(files)) {
-    const file = await fs.stat(filename).catch(console.warn);
-    const gzip = file ? zlib.gzipSync(await fs.readFile(filename)).length : 0;
+    const fileStatInfo = await getFileStatistics(filename);
 
-    const stat = (allFilesStat[filename] = file
-      ? {
-          name,
-          size: file.size,
-          path: filename,
-          gzip,
-          compressed: file.size ? gzip / file.size : 1,
-          history: commits.map(({ tag }) => {
-            const files = npmHistory[tag];
-            const file = (files && files[filename]) || null;
+    if (fileStatInfo) {
+      const { file, gzip } = fileStatInfo;
+      const allFileStat = allFilesStat[filename] = {
+        name,
+        size: file.size,
+        path: filename,
+        gzip,
+        compressed: file.size ? gzip / file.size : 1,
+        history: getHistoricalFileStats(filename, filteredCommits, npmHistory)
+      };
 
-            return {
-              tag,
-              ...file,
-            };
-          }),
-        }
-      : null);
-
-    if (stat.history[0]) {
-      const diff = stat.gzip - stat.history[0].gzip;
-
-      if (diff > FILE_SIZE_DIFF_THRESHOLD) {
-        warns.push({
-          filename,
-          sizeReport: true,
-          diff,
-          percent: stat.gzip ? diff / stat.gzip : 0,
-        });
+      const warningInfo = generateFileSizeWarning(allFileStat);
+      if (warningInfo) {
+        warns.push(warningInfo);
       }
     }
   }
@@ -114,6 +89,68 @@ const generateFileReport = async (files, historyCount = 3) => {
     files: allFilesStat,
     warns,
   };
+};
+
+const filterCommitsByVersion = (commits) => {
+  return commits.filter(({ tag }) => {
+    return MAJOR_NUMBER === parseVersion(tag)[0];
+  });
+};
+
+const getNpmHistory = async (commits) => {
+  const npmHistory = {};
+
+  await Promise.all(
+    commits.map(async ({ tag }) => {
+      npmHistory[tag] = await getFilesFromNPM(`axios@${tag.replace(/^v/, '')}`);
+    })
+  );
+
+  return npmHistory;
+};
+
+const getFileStatistics = async (filename) => {
+  const file = await fs.stat(filename).catch(console.warn);
+
+  if (!file) {
+    return null;
+  }
+
+  const content = await fs.readFile(filename);
+  const gzip = zlib.gzipSync(content).length;
+
+  return { file, gzip };
+};
+
+const getHistoricalFileStats = (filename, filteredCommits, npmHistory) => {
+  return filteredCommits.map(({ tag }) => {
+    const files = npmHistory[tag];
+    const file = (files && files[filename]) || null;
+
+    return {
+      tag,
+      ...file
+    };
+  });
+};
+
+const generateFileSizeWarning = (fileStat) => {
+  if (!fileStat || !fileStat.history[0]) {
+    return null;
+  }
+
+  const diff = fileStat.gzip - fileStat.history[0].gzip;
+
+  if (diff > FILE_SIZE_DIFF_THRESHOLD) {
+    return {
+      filename: fileStat.path,
+      sizeReport: true,
+      diff,
+      percent: fileStat.gzip ? diff / fileStat.gzip : 0
+    };
+  }
+
+  return null;
 };
 
 const generateBody = async ({ files, template = './templates/pr.hbs' } = {}) => {
