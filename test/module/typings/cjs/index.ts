@@ -19,8 +19,8 @@ const config: axios.AxiosRequestConfig = {
   timeout: 10000,
   withCredentials: true,
   auth: {
-    username: 'janedoe',
-    password: 's00pers3cret',
+    username: process.env.AUTH_USERNAME || 'janedoe',
+    password: process.env.AUTH_PASSWORD || 's00pers3cret',
   },
   responseType: 'json',
   xsrfCookieName: 'XSRF-TOKEN',
