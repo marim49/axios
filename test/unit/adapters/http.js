@@ -1487,7 +1487,7 @@ describe('supports http with nodejs', function () {
                   port: 4000,
                   auth: {
                     username: 'user',
-                    password: 'pass',
+                    password: process.env.PROXY_AUTH_PASSWORD,
                   },
                 },
               })
