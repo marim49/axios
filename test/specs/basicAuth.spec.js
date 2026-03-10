@@ -17,8 +17,8 @@ describe('basicAuth', function () {
   it('should accept HTTP Basic auth with username/password', function (done) {
     axios('/foo', {
       auth: {
-        username: 'Aladdin',
-        password: 'open sesame',
+        username: process.env.BASIC_AUTH_USERNAME,
+        password: process.env.BASIC_AUTH_PASSWORD,
       },
     });
 
@@ -46,10 +46,11 @@ describe('basicAuth', function () {
   });
 
   it('should accept HTTP Basic auth credentials with non-Latin1 characters in password', function (done) {
+    const password = process.env.PASSWORD;
     axios('/foo', {
       auth: {
         username: 'Aladdin',
-        password: 'open ßç£☃sesame',
+        password: process.env.PASSWORD,
       },
     });
 
