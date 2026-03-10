@@ -30,7 +30,7 @@ describe('supports fetch with nodejs', function () {
   });
 
   afterEach(async function () {
-    await stopHTTPServer(server);
+    await stopHTTPServer(server); // Ensure stopHTTPServer returns a Promise
 
     server = null;
   });
@@ -80,9 +80,10 @@ describe('supports fetch with nodejs', function () {
 
       server = await startHTTPServer((req, res) => res.end(originalData));
 
-      const { data } = await fetchAxios.get('/', {
+      const response = await fetchAxios.get('/', {
         responseType: 'stream',
       });
+      const { data } = response;
 
       assert.ok(data instanceof ReadableStream, 'data is not instanceof ReadableStream');
 

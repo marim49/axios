@@ -86,7 +86,7 @@ describe('supports http with nodejs', function () {
   });
 
   it('should support IPv4 literal strings', function (done) {
-    var data = {
+    const data = {
       firstName: 'Fred',
       lastName: 'Flintstone',
       emailAddr: 'fred@example.com',
@@ -1662,7 +1662,7 @@ describe('supports http with nodejs', function () {
   });
 
   it('should support cancel', function (done) {
-    var source = axios.CancelToken.source();
+    let source = axios.CancelToken.source();
     server = http
       .createServer(function (req, res) {
         // call cancel() when the request has been sent, but a response has not been received
@@ -1904,7 +1904,7 @@ describe('supports http with nodejs', function () {
 
         Promise.all(requests)
           .then(function () {
-            assert.deepStrictEqual(canceledStack.sort(), [1, 2, 3, 4, 5]);
+            assert.deepStrictEqual(canceledStack.sort((a, b) => a - b), [1, 2, 3, 4, 5]);
           })
           .then(done, done);
       });
@@ -1931,7 +1931,7 @@ describe('supports http with nodejs', function () {
 
         server = http
           .createServer(function (req, res) {
-            var receivedForm = new formidable.IncomingForm();
+            let receivedForm = new formidable.IncomingForm();
 
             assert.ok(req.rawHeaders.find((header) => header.toLowerCase() === 'content-length'));
 
@@ -2241,7 +2241,7 @@ describe('supports http with nodejs', function () {
         const chunkLength = Buffer.byteLength(chunk);
         const contentLength = count * chunkLength;
 
-        var readable = stream.Readable.from(
+        let readable = stream.Readable.from(
           (async function* () {
             let i = count;
 
