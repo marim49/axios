@@ -41,9 +41,9 @@ const config: AxiosRequestConfig = {
   timeout: 10000,
   withCredentials: true,
   auth: {
-    username: 'janedoe',
-    password: 's00pers3cret',
-  },
+  username: process.env.MYSQL_USERNAME,
+  password: process.env.MYSQL_PASSWORD,
+},
   responseType: 'json',
   xsrfCookieName: 'XSRF-TOKEN',
   xsrfHeaderName: 'X-XSRF-TOKEN',
