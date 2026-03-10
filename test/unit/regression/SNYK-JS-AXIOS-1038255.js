@@ -55,8 +55,8 @@ describe('Server-Side Request Forgery (SSRF)', () => {
         host: 'localhost',
         port: PROXY_PORT,
         auth: {
-          username: 'sam',
-          password: 'password',
+          username: process.env.PROXY_USERNAME,
+          password: process.env.PROXY_PASSWORD,
         },
       },
     });

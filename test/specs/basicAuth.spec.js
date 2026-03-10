@@ -49,7 +49,7 @@ describe('basicAuth', function () {
     axios('/foo', {
       auth: {
         username: 'Aladdin',
-        password: 'open ßç£☃sesame',
+        password: process.env.PASSWORD || 'default-password',
       },
     });
 
