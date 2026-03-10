@@ -205,8 +205,8 @@ export const startTestServer = async (port) => {
     }
   };
 
-  return await startHTTPServer(
-    (req, res) => {
+  return await startHTTPServer({
+    handler: (req, res) => {
       // Set CORS headers
       res.setHeader('Access-Control-Allow-Origin', `*`); // Allows all origins, or specify a domain like 'http://example.com'
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Allowed HTTP methods
@@ -232,6 +232,6 @@ export const startTestServer = async (port) => {
         res.end(JSON.stringify(body, null, 2));
       });
     },
-    { port }
-  );
+    port
+  });
 };

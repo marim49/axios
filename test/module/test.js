@@ -113,7 +113,7 @@ describe('module', function () {
       it('should be able to be loaded with import', async function () {
         this.timeout(30000);
 
-        await exec(`npm test --prefix ${pkgPath}`, {});
+        await exec(`npm test --prefix ${pkgPath}`);
       });
     });
 
@@ -157,7 +157,7 @@ describe('module', function () {
       it('should pass types check', async function () {
         this.timeout(30000);
 
-        await spawn(`npm test --prefix ${pkgPath}`, [], {
+        await spawn(`npm test --prefix ${pkgPath}`);
           shell: true,
           stdio: 'pipe',
         });
