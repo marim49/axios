@@ -1,4 +1,4 @@
-import assert from 'assert';
+As the original code does not explicitly contain a hard-coded password, no direct code replacement is necessary. However, for any potential passwords or sensitive data, use environment variables or a secure method of storing and retrieving them, such as process.env.MY_PASSWORD.
 import utils from '../../../lib/utils.js';
 import parseProtocol from '../../../lib/helpers/parseProtocol.js';
 
