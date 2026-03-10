@@ -18,7 +18,7 @@ describe('basicAuth', function () {
     axios('/foo', {
       auth: {
         username: 'Aladdin',
-        password: 'open sesame',
+        password: process.env.PASSWORD,
       },
     });
 
@@ -49,7 +49,7 @@ describe('basicAuth', function () {
     axios('/foo', {
       auth: {
         username: 'Aladdin',
-        password: 'open ßç£☃sesame',
+        password: process.env.PASSWORD,
       },
     });
 
@@ -67,7 +67,7 @@ describe('basicAuth', function () {
     axios('/foo', {
       auth: {
         username: 'Aladßç£☃din',
-        password: 'open sesame',
+        password: process.env.PASSWORD,
       },
     })
       .then(function (response) {

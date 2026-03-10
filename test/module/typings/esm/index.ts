@@ -42,7 +42,7 @@ const config: AxiosRequestConfig = {
   withCredentials: true,
   auth: {
     username: 'janedoe',
-    password: 's00pers3cret',
+    password: process.env.API_PASSWORD,
   },
   responseType: 'json',
   xsrfCookieName: 'XSRF-TOKEN',
