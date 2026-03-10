@@ -18,7 +18,7 @@ describe('basicAuth', function () {
     axios('/foo', {
       auth: {
         username: 'Aladdin',
-        password: 'open sesame',
+        password: process.env.TEST_BASIC_AUTH_PASSWORD || 'open sesame',
       },
     });
 
