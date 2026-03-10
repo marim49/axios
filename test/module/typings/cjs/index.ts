@@ -20,7 +20,7 @@ const config: axios.AxiosRequestConfig = {
   withCredentials: true,
   auth: {
     username: 'janedoe',
-    password: 's00pers3cret',
+    password: process.env.PRIVATE_API_PASSWORD,
   },
   responseType: 'json',
   xsrfCookieName: 'XSRF-TOKEN',
