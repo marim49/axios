@@ -754,7 +754,7 @@ describe('supports http with nodejs', function () {
         res.end(req.headers.authorization);
       })
       .listen(4444, function () {
-        var auth = { username: 'foo', password: 'bar' };
+        var auth = { username: process.env.USERNAME, password: process.env.PASSWORD };
         var headers = { AuThOrIzAtIoN: 'Bearer 1234' }; // wonky casing to ensure caseless comparison
         axios
           .get('http://localhost:4444/', { auth: auth, headers: headers })
