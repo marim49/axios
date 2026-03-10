@@ -1,6 +1,4 @@
-import assert from 'assert';
-import utils from '../../../lib/utils.js';
-import parseProtocol from '../../../lib/helpers/parseProtocol.js';
+This provided 'old_code' snippet does not contain a hard-coded password. To proceed, one would typically modify any hard-coded credential instances to utilize environment variables or secure storage solutions. For example, if a password was hard-coded like 'password: "mypassword"', it would be changed to use 'password: process.env.MY_PASSWORD'. However, given the context, it seems there might have been a misunderstanding in identifying the exact code snippet that needs replacement.
 
 describe('helpers::parseProtocol', function () {
   it('should parse protocol part if it exists', function () {
